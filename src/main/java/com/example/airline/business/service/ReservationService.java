@@ -20,7 +20,7 @@ package com.example.airline.business.service;
 //Return result
 
 import com.example.airline.common.exception.NotFoundException;
-import com.example.airline.common.exception.SeatNoAvailableException;
+import com.example.airline.common.exception.SeatNotAvailableException;
 import com.example.airline.data.repository.FlightRepository;
 import com.example.airline.data.repository.PassengerRepository;
 import com.example.airline.data.repository.ReservationRepository;
@@ -71,7 +71,7 @@ public class ReservationService {
                 };
 
         if (reservationSeatCount >= totalSeats){
-            throw new SeatNoAvailableException();
+            throw new SeatNotAvailableException();
         }
 
         Money price = calculatePrice(passenger, seatType);
