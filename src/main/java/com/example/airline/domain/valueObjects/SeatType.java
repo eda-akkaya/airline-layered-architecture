@@ -1,4 +1,6 @@
 package com.example.airline.domain.valueObjects;
 
-public class SeatType {
+public enum SeatType {
+    ECONOMY,
+    BUSINESS
 }
