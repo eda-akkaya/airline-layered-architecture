@@ -1,7 +1,7 @@
 package com.example.airline.common.exception;
 
-public class SeatNoAvailableException extends RuntimeException {
-    public SeatNoAvailableException() {
+public class SeatNotAvailableException extends RuntimeException {
+    public SeatNotAvailableException() {
         super("Requested seat type is not available for this flight !!");
     }
 }
