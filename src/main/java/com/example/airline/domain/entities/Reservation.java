@@ -57,4 +57,16 @@ public class Reservation {
     public ReservationStatus getReservationStatus() {
         return reservationStatus;
     }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public SeatType getSeatType() {
+        return seatType;
+    }
+
+    public Money getPrice() {
+        return price;
+    }
 }
