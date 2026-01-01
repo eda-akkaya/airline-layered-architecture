@@ -1,4 +1,23 @@
 package com.example.airline.business.service;
+
+import com.example.airline.common.exception.BusinessException;
+import com.example.airline.common.exception.NotFoundException;
+import com.example.airline.common.exception.SeatNotAvailableException;
+import com.example.airline.data.repository.FlightRepository;
+import com.example.airline.data.repository.PassengerRepository;
+import com.example.airline.data.repository.ReservationRepository;
+import com.example.airline.domain.entities.Flight;
+import com.example.airline.domain.entities.Passenger;
+import com.example.airline.domain.entities.Reservation;
+import com.example.airline.domain.enums.ReservationStatus;
+import com.example.airline.domain.valueObjects.Money;
+import com.example.airline.domain.valueObjects.SeatType;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+
+
 //Why only one Service?
 //Seat control + price + registration in the same transaction
 // split it up, inconsistencies arise
@@ -18,22 +37,6 @@ package com.example.airline.business.service;
 //Create reservation
 //Save
 //Return result
-
-import com.example.airline.common.exception.NotFoundException;
-import com.example.airline.common.exception.SeatNotAvailableException;
-import com.example.airline.data.repository.FlightRepository;
-import com.example.airline.data.repository.PassengerRepository;
-import com.example.airline.data.repository.ReservationRepository;
-import com.example.airline.domain.entities.Flight;
-import com.example.airline.domain.entities.Passenger;
-import com.example.airline.domain.entities.Reservation;
-import com.example.airline.domain.enums.ReservationStatus;
-import com.example.airline.domain.valueObjects.Money;
-import com.example.airline.domain.valueObjects.SeatType;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 @Service
 public class ReservationService {
@@ -55,7 +58,7 @@ public class ReservationService {
                 .orElseThrow(()-> new NotFoundException("Flight not found!!"));
 
         Passenger passenger = passengerRepository.findById(passengerId)
-                .orElseThrow(()-> new NotFoundException("Passsenger not found!!"));
+                .orElseThrow(()-> new NotFoundException("Passenger not found!!"));
 
         long reservationSeatCount =
                 reservationRepository.countByFlightAndSeatTypeAndStatus(
@@ -94,5 +97,24 @@ public class ReservationService {
         return new Money(basePrice.multiply(multiplier), "TRY");
 
 
+    }
+
+    @Transactional(readOnly = true)
+    public Reservation getReservationById(Long reservationId){
+        return reservationRepository
+                .findById(reservationId)
+                .orElseThrow(()-> new NotFoundException("Reservation not found"));
+    }
+
+    @Transactional
+    public void cancelReservation(Long reservationId){
+        Reservation reservation =  reservationRepository
+                .findById(reservationId)
+                .orElseThrow(()-> new NotFoundException("Reservation not found"));
+
+        if (reservation.getReservationStatus() == ReservationStatus.CANCELLED){
+            throw new BusinessException("Reservation already cancelled");
+        }
+        reservation.cancel();
     }
 }

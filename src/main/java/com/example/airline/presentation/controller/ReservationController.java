@@ -7,10 +7,7 @@ import com.example.airline.common.dto.ReservationResponse;
 import com.example.airline.domain.entities.Reservation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -22,7 +19,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping
+    @PostMapping // Create
     public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest request){
         Reservation reservation = reservationService
                 .createReservation(
@@ -42,4 +39,24 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}") // Read
+    public ResponseEntity<ReservationResponse> getReservation(@PathVariable Long id){
+        Reservation reservation = reservationService.getReservationById(id);
+        ReservationResponse response =
+                new ReservationResponse(
+                        reservation.getId(),
+                        reservation.getFlight().getFlightNumber(),
+                        reservation.getSeatType(),
+                        reservation.getPrice().getAmount(),
+                        reservation.getPrice().getCurrency()
+                );
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/cancel") // Cancel
+    public ResponseEntity<Void> cancelReservation(@PathVariable Long id){
+        reservationService.cancelReservation(id);
+        System.out.println("The reservation with ID " + id + " has been canceled.");
+        return ResponseEntity.noContent().build();
+    }
 }

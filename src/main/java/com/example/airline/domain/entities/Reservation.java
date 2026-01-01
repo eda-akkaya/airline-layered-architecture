@@ -69,4 +69,9 @@ public class Reservation {
     public Money getPrice() {
         return price;
     }
+
+    // An entity carries not only data but also behaviour.
+    public void cancel(){
+        this.reservationStatus = ReservationStatus.CANCELLED;
+    }
 }
