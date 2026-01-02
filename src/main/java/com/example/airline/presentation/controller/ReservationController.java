@@ -5,6 +5,7 @@ import com.example.airline.business.service.ReservationService;
 import com.example.airline.common.dto.CreateReservationRequest;
 import com.example.airline.common.dto.ReservationResponse;
 import com.example.airline.domain.entities.Reservation;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class ReservationController {
     }
 
     @PostMapping // Create
-    public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest request){
+    public ResponseEntity<ReservationResponse> createReservation(@Valid @RequestBody CreateReservationRequest request){
         Reservation reservation = reservationService
                 .createReservation(
                         request.getFlightId(),
